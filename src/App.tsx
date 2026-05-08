@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Activity, 
   ChevronRight, 
@@ -15,10 +15,8 @@ import {
   Facebook,
   Twitter,
   ShoppingCart,
-  LayoutDashboard,
   Package,
   ShoppingBag,
-  Settings,
   LogOut
 } from 'lucide-react';
 import { motion } from 'motion/react';
