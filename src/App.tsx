@@ -56,7 +56,8 @@ const expertise = [
 export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'landing' | 'shop'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'shop' | 'product'>('landing');
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -114,6 +115,8 @@ export default function App() {
       image: "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?auto=format&fit=crop&q=80&w=600"
     }
   ];
+
+  const selectedProduct = products.find(p => p.id === selectedProductId);
 
   return (
     <div className="min-h-screen font-sans bg-brand-stone-50 text-brand-stone-900">
@@ -364,7 +367,7 @@ export default function App() {
             </div>
           </section>
         </>
-      ) : (
+      ) : currentView === 'shop' ? (
         <div className="pt-32 pb-24 bg-brand-stone-50 min-h-screen">
           <div className="max-w-7xl mx-auto px-16">
             <div className="mb-16">
@@ -410,15 +413,60 @@ export default function App() {
                   <p className="text-[11px] text-brand-stone-500 leading-relaxed mb-6">
                     {product.description}
                   </p>
-                  <button className="w-full geometric-btn-outline group-hover:bg-brand-stone-900 group-hover:text-white transition-all duration-300 uppercase">
-                    Purchase Metadata
+                  <button 
+                    className="w-full geometric-btn-outline group-hover:bg-brand-stone-900 group-hover:text-white transition-all duration-300 uppercase"
+                    onClick={() => {
+                      setSelectedProductId(product.id);
+                      setCurrentView('product');
+                    }}
+                  >
+                    View Details
                   </button>
                 </motion.div>
               ))}
             </div>
           </div>
         </div>
-      )}
+      ) : currentView === 'product' && selectedProduct ? (
+        <div className="pt-32 pb-24 bg-white min-h-screen">
+          <div className="max-w-7xl mx-auto px-16">
+            <button 
+              onClick={() => setCurrentView('shop')}
+              className="mb-8 flex items-center text-xs font-bold uppercase tracking-widest text-brand-stone-500 hover:text-brand-primary"
+            >
+              <ChevronRight className="w-4 h-4 rotate-180 mr-2" />
+              Back to Shop
+            </button>
+            <div className="grid lg:grid-cols-2 gap-16">
+              <div className="aspect-square bg-brand-stone-50 border border-brand-stone-200 p-12">
+                <div className="grayscale contrast-125 brightness-90 w-full h-full">
+                  <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                </div>
+              </div>
+              <div className="flex flex-col justify-center">
+                <div className="label-technical mb-6">[{selectedProduct.category}]</div>
+                <h1 className="text-4xl lg:text-5xl font-bold uppercase tracking-tighter mb-4">
+                  {selectedProduct.name}
+                </h1>
+                <div className="font-mono text-xl font-bold text-brand-primary mb-8">${selectedProduct.price.toFixed(2)}</div>
+                <p className="text-brand-stone-500 leading-relaxed max-w-md mb-12">
+                  {selectedProduct.description} 
+                  <br/><br/>
+                  Advanced biomechanical support designed for clinical-grade recovery and symmetry restoration.
+                </p>
+                <div className="space-y-4">
+                  <button className="geometric-btn-dark w-full md:w-auto uppercase px-12">
+                    Add to Cart
+                  </button>
+                  <label className="block text-[10px] uppercase font-bold tracking-widest text-brand-stone-400 mt-4">
+                    In Stock • Ready to ship
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {/* Footer */}
       <footer className="h-[120px] bg-brand-stone-900 flex items-center px-16 justify-between text-white/40 text-[9px] uppercase tracking-[0.2em] font-bold">
